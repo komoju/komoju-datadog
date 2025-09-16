@@ -110,7 +110,7 @@ impl Tracer {
             ]),
         );
 
-        if config.version == "development" {
+        if config.env == "development" {
             tracing_subscriber::registry()
                 .with(
                     tracing_subscriber::EnvFilter::builder()
