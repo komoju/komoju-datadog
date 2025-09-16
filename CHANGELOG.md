@@ -1,4 +1,4 @@
-## [0.1.0] - 2025-09-16
+## [0.1.1] - 2025-09-16
 
 ### 🚀 Features
 
@@ -6,6 +6,10 @@
 - Make support for AWS, axum, and SQLx optional
 - Add a function to propagate tracing headers
 - Improve ergonomics of the statsD client
+
+### 🐛 Bug Fixes
+
+- Show human-readable logs in development env
 
 ### 💼 Other
 
@@ -15,6 +19,7 @@
 
 - Better doctests
 - Flesh out the README a bit
+- Add a changelog
 
 ### ⚙️ Miscellaneous Tasks
 
