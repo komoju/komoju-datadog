@@ -2,6 +2,9 @@
 name = "komoju-datadog"
 version = "0.1.0"
 edition = "2024"
+description = "Opinionated DataDog instrumentation toolkit"
+license-file = "LICENSE"
+repository = "https://github.com/komoju/komoju-datadog"
 
 [features]
 default = []
