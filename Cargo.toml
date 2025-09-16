@@ -5,25 +5,25 @@ edition = "2024"
 
 [features]
 default = []
-aws_ecs = ["dep:serde_json", "dep:http"]
-axum = ["dep:axum", "dep:pin-project-lite", "dep:futures-util", "dep:tracing", "dep:tower", "dep:http"]
+aws_ecs = ["dep:serde_json"]
+axum = ["dep:axum", "dep:pin-project-lite", "dep:futures-util", "dep:tower"]
 sqlx = ["dep:sqlx-datadog"]
 
 [dependencies]
 bon = "3"
 datadog-formatting-layer = "6"
 dogstatsd = "0.12"
+http = "1"
 itertools = "0.14"
 opentelemetry = "0.30"
 opentelemetry-datadog = { version = "0.18", features = ["reqwest-blocking-client"] }
 opentelemetry_sdk = "0.30"
 regex = "1"
 reqwest = { version = "0.12", default-features = false, features = ["json"] }
+tracing = "0.1"
 tracing-opentelemetry = "0.31"
 tracing-opentelemetry-instrumentation-sdk = { version = "0.30", features = ["http"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "parking_lot"] }
-
-http = { version = "1", optional = true }
 
 # AWS ECS support
 serde_json = { version = "1", optional = true }
@@ -33,7 +33,6 @@ axum = { version = "0.8", optional = true }
 futures-util = { version = "0.3", optional = true }
 pin-project-lite = { version = "0.2", optional = true }
 tower = { version = "0.5", features = ["util"], optional = true }
-tracing = { version = "0.1", optional = true }
 
 # SQLx support
 sqlx-datadog = { version = "0.3", optional = true }
