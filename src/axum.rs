@@ -13,11 +13,11 @@ use std::{
     task::{Context, Poll},
 };
 use tower::{Layer, Service};
-use tracing::{field::Empty, Span};
+use tracing::{Span, field::Empty};
 use tracing_opentelemetry::OpenTelemetrySpanExt;
 use tracing_opentelemetry_instrumentation_sdk::{
-    http::{self as otel_http, http_flavor, http_host, http_method, url_scheme, user_agent},
     TRACING_TARGET,
+    http::{self as otel_http, http_flavor, http_host, http_method, url_scheme, user_agent},
 };
 
 /// Creates a span from a request.
