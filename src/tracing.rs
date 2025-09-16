@@ -19,7 +19,7 @@ use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::Subscr
 /// It is important to initialize this before initializing an async runtime. Failing to do so will
 /// result in panicking.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use komoju_datadog::{Config, tracing::Tracer};

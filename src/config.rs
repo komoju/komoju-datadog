@@ -6,7 +6,7 @@
 ///
 /// Fields can be explicitly set through the builder or set via `DD_` environment variables.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use komoju_datadog::Config;

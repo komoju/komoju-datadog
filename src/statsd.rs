@@ -14,7 +14,7 @@ static GLOBAL_STATSD: OnceLock<StatsD> = OnceLock::new();
 /// A single, global client is recommended, but a client can also be created and passed around
 /// where needed.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use komoju_datadog::statsd::StatsD;

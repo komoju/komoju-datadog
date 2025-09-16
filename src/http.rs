@@ -7,8 +7,16 @@ use std::{str::FromStr, sync::LazyLock};
 
 /// Returns a Datadog-style path group from a request path, with dynamic segments replaced by '?'.
 ///
-/// Example:
-/// `/api/v1/merchants/abc123/settlements` becomes `/api/v1/merchants/?/settlements`
+/// # Examples
+///
+/// ```
+/// # use komoju_datadog::http::path_group;
+///
+/// assert_eq!(
+///   path_group("/api/v1/merchants/abc123/settlements"),
+///   "/api/v1/merchants/?/settlements"
+/// );
+/// ```
 #[inline]
 pub fn path_group(path: &str) -> String {
     path.split('/')
@@ -29,7 +37,7 @@ static STATIC_SEGMENT_RE: LazyLock<Regex> =
 /// Attaches tracing headers to a request's [`HeaderMap`], so that the far side can continue the
 /// current trace.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// use komoju_datadog::http::attach_tracing_headers;

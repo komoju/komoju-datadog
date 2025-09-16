@@ -99,7 +99,7 @@ where
 
 /// Axum Layer to create OTel spans for requests.
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// # use axum::routing::{Router, get, post};
