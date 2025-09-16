@@ -14,7 +14,7 @@ static CONTAINER_ID: OnceLock<Option<String>> = OnceLock::new();
 /// # Panics
 ///
 /// Panics if the initial call is from an async context.
-pub fn container_id() -> Option<&'static str> {
+pub(crate) fn container_id() -> Option<&'static str> {
     CONTAINER_ID
         .get_or_init(|| {
             let ecs_metadata_uri = std::env::var("ECS_CONTAINER_METADATA_URI_V4").ok()?;

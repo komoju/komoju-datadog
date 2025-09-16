@@ -7,9 +7,8 @@
 //!
 //! Traces are emitted to the Datadog agent.
 
-use crate::aws;
-
 use datadog_formatting_layer::DatadogFormattingLayer;
+#[cfg(feature = "aws_ecs")]
 use http::{HeaderMap, HeaderValue};
 use opentelemetry::trace::TracerProvider;
 use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::SubscriberInitExt};
@@ -23,7 +22,7 @@ use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::Subscr
 /// # Example
 ///
 /// ```
-/// use komoju_datadog::{Config, Tracer};
+/// use komoju_datadog::{Config, tracing::Tracer};
 ///
 /// fn main() {
 ///    let o11y_config = Config::builder().build();
@@ -83,10 +82,11 @@ impl Tracer {
                     .unwrap_or(&*span.name)
             })
             .with_http_client(
+                #[cfg(feature = "aws_ecs")]
                 reqwest::blocking::Client::builder()
                     .default_headers({
                         let mut headers = HeaderMap::new();
-                        if let Some(container_id) = aws::container_id() {
+                        if let Some(container_id) = crate::aws::container_id() {
                             headers.insert(
                                 "Datadog-Container-ID",
                                 HeaderValue::from_static(container_id),
@@ -96,6 +96,8 @@ impl Tracer {
                     })
                     .build()
                     .expect("failed to build OTel export reqwest client"),
+                #[cfg(not(feature = "aws_ecs"))]
+                reqwest::blocking::Client::new(),
             )
             .install_batch()
             .expect("failed to setup OpenTelemetry");
@@ -116,7 +118,7 @@ impl Tracer {
                         .from_env_lossy(),
                 )
                 .with(tracing_subscriber::fmt::layer().pretty())
-                .with(tracing_opentelemetry::layer().with_tracer(provider.tracer("opentelemetry")))
+                .with(tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing")))
                 .init();
         } else {
             tracing_subscriber::registry()
@@ -126,7 +128,7 @@ impl Tracer {
                         .from_env_lossy(),
                 )
                 .with(DatadogFormattingLayer::default())
-                .with(tracing_opentelemetry::layer().with_tracer(provider.tracer("opentelemetry")))
+                .with(tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing")))
                 .init();
         };
 
@@ -134,7 +136,7 @@ impl Tracer {
             shutdown: Box::new(move || {
                 provider
                     .shutdown()
-                    .expect("failed to shutdown OTel provider");
+                    .expect("failed to shutdown tracing provider");
             }),
         }
     }

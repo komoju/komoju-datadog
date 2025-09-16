@@ -4,15 +4,12 @@
 
 use axum::extract::{ConnectInfo, MatchedPath};
 use http::{Request, Response};
-use itertools::Itertools;
 use pin_project_lite::pin_project;
-use regex::Regex;
 use std::{
     error::Error,
     future::Future,
     net::SocketAddr,
     pin::Pin,
-    sync::LazyLock,
     task::{Context, Poll},
 };
 use tower::{Layer, Service};
@@ -43,7 +40,7 @@ fn make_span_from_request<B>(req: &Request<B>) -> Span {
         target: TRACING_TARGET,
         "HTTP request",
         operation = "axum.request",
-        resource = format!("{} {}", http_method, route_from_path(req.uri().path())),
+        resource = format!("{} {}", http_method, crate::http::path_group(req.uri().path())),
         http.base_url = http_host(req),
         http.method = %http_method,
         http.url = req.uri().path(),
@@ -106,13 +103,13 @@ where
 ///
 /// ```
 /// # use axum::routing::{Router, get, post};
-/// use komoju_datadog::axum::OtelAxumLayer;
+/// use komoju_datadog::axum::AxumTraceLayer;
 ///
 /// # let router: Router<()> =
 /// axum::Router::new()
 ///   // Example route that creates a span for each request.
 ///   .route("/sign_in", post(sign_in))
-///   .layer(OtelAxumLayer)
+///   .layer(AxumTraceLayer)
 ///   // No traces on health checks.
 ///   .route("/health_check", get(health_check));
 ///
@@ -120,24 +117,24 @@ where
 /// # async fn health_check() {}
 /// ```
 #[derive(Clone, Debug)]
-pub struct OtelAxumLayer;
+pub struct AxumTraceLayer;
 
-impl<S> Layer<S> for OtelAxumLayer {
+impl<S> Layer<S> for AxumTraceLayer {
     /// The wrapped service
-    type Service = OtelAxumService<S>;
+    type Service = AxumTraceService<S>;
     fn layer(&self, inner: S) -> Self::Service {
-        OtelAxumService { inner }
+        AxumTraceService { inner }
     }
 }
 
 /// Middleware `Service` layer that creates OTel spans for every request.
 #[derive(Debug, Clone)]
-pub struct OtelAxumService<S> {
+pub struct AxumTraceService<S> {
     /// The inner service layer.
     inner: S,
 }
 
-impl<S, B, B2> Service<Request<B>> for OtelAxumService<S>
+impl<S, B, B2> Service<Request<B>> for AxumTraceService<S>
 where
     S: Service<Request<B>, Response = Response<B2>> + Clone + Send + 'static,
     S::Error: Error + 'static,
@@ -208,39 +205,4 @@ fn http_route<B>(req: &Request<B>) -> &str {
     req.extensions()
         .get::<MatchedPath>()
         .map_or_else(|| "", |mp| mp.as_str())
-}
-
-/// Regular expression that matches static segments in request paths, e.g. "api" or "v1".
-static STATIC_SEGMENT_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new("^(?:[^0-9]*|v[0-9]+)$").expect("invalid static segment regex"));
-
-/// Returns a Datadog-style route from a request path, with dynamic segments replaced by '?'.
-///
-/// Example:
-/// `/api/v1/merchants/abc123/settlements` becomes `/api/v1/merchants/?/settlements`
-#[inline]
-pub fn route_from_path(path: &str) -> String {
-    path.split('/')
-        .map(|segment| {
-            if STATIC_SEGMENT_RE.is_match(segment) {
-                segment
-            } else {
-                "?"
-            }
-        })
-        .join("/")
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn static_segment_re_works() {
-        assert!(STATIC_SEGMENT_RE.is_match(""));
-        assert!(STATIC_SEGMENT_RE.is_match("v1"));
-        assert!(STATIC_SEGMENT_RE.is_match("api"));
-        assert!(!STATIC_SEGMENT_RE.is_match("abc123"));
-        assert!(!STATIC_SEGMENT_RE.is_match("v123abc"));
-    }
 }
