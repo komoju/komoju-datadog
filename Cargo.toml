@@ -4,3 +4,26 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+axum = { version = "0.8" }
+bon = "3"
+datadog-formatting-layer = "6"
+dogstatsd = "0.12"
+futures-util = "0.3"
+http = "1"
+itertools = "0.14"
+opentelemetry = "0.30"
+opentelemetry-datadog = { version = "0.18", features = ["reqwest-blocking-client"] }
+opentelemetry_sdk = "0.30"
+pin-project-lite = "0.2"
+regex = "1"
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+serde_json = "1"
+sqlx-datadog = "0.3"
+tower = { version = "0.5", features = ["util"] }
+tracing = "0.1"
+tracing-opentelemetry = "0.31"
+tracing-opentelemetry-instrumentation-sdk = { version = "0.30", features = ["http"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "parking_lot"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread"] }

@@ -1,14 +1,13 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+#![doc = include_str!("../README.md")]
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+mod aws;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub mod axum;
+pub mod config;
+pub mod statsd;
+pub mod tracing;
+
+pub use config::Config;
+pub use tracing::Tracer;
+
+pub use sqlx_datadog::instrument_query;
