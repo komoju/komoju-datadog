@@ -44,7 +44,7 @@ pub struct Config {
     #[builder(into, default = default_version())]
     pub version: String,
 
-    /// The Datadog agent URI to send traces to.
+    /// The Datadog agent URL to send traces to.
     ///
     /// Can also be set via the `DD_TRACE_AGENT_URL` environment variable.
     ///
@@ -52,7 +52,7 @@ pub struct Config {
     #[builder(into, default = default_trace_agent_uri())]
     pub trace_agent_url: String,
 
-    /// The Datadog agent URI to send statsD metrics to.
+    /// The Datadog agent URL to send statsD metrics to.
     ///
     /// Can also be set via the `DD_METRICS_AGENT_URL` environment variable.
     ///
