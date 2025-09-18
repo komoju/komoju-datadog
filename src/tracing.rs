@@ -79,7 +79,7 @@ impl Tracer {
                         opentelemetry::Value::String(v) => Some(v.as_str()),
                         _ => None,
                     })
-                    .unwrap_or(&*span.name)
+                    .unwrap_or_default()
             })
             .with_http_client(
                 #[cfg(feature = "aws_ecs")]
