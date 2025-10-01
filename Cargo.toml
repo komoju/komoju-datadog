@@ -18,14 +18,14 @@ datadog-formatting-layer = "6"
 dogstatsd = "0.12"
 http = "1"
 itertools = "0.14"
-opentelemetry = "0.30"
+opentelemetry = "0.31"
 opentelemetry-datadog = { version = "0.18", features = ["reqwest-blocking-client"] }
-opentelemetry_sdk = "0.30"
+opentelemetry_sdk = "0.31"
 regex = "1"
 reqwest = { version = "0.12", default-features = false, features = ["json"] }
 tracing = "0.1"
-tracing-opentelemetry = "0.31"
-tracing-opentelemetry-instrumentation-sdk = { version = "0.30", features = ["http"] }
+tracing-opentelemetry = "0.32"
+tracing-opentelemetry-instrumentation-sdk = { version = "0.31", features = ["http"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "parking_lot"] }
 
 # AWS ECS support
