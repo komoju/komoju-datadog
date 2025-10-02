@@ -22,8 +22,9 @@ komoju-datadog = "0.1"
 ## Usage
 
 This library is configured through the `Config` struct, which automatically
-picks up `DD_` environment variables. See the API documentation for a complete
-list of options.
+picks up `DD_` environment variables. See
+the [API documentation](https://docs.rs/komoju-datadog/latest/komoju_datadog/)
+for a complete list of options.
 
 ```rust
 use komoju_datadog::{Config, tracing::Tracer, statsd::StatsD};
