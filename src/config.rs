@@ -48,7 +48,7 @@ pub struct Config {
     /// Can also be set via the `DD_TRACE_AGENT_URL` environment variable.
     ///
     /// Defaults to `http://localhost:8126`.
-    pub trace_agent_url: String,
+    pub trace_agent_url: Option<String>,
 
     /// The Datadog agent URL to send statsD metrics to.
     ///
@@ -70,7 +70,7 @@ pub struct ConfigBuilder {
     service: String,
     env: String,
     version: String,
-    trace_agent_url: String,
+    trace_agent_url: Option<String>,
     metrics_agent_url: String,
 }
 
@@ -80,8 +80,7 @@ impl Default for ConfigBuilder {
             service: env::var("DD_SERVICE").unwrap_or_else(|_| String::from("unknown")),
             env: env::var("DD_ENV").unwrap_or_else(|_| String::from("development")),
             version: env::var("DD_VERSION").unwrap_or_else(|_| String::from("unknown")),
-            trace_agent_url: env::var("DD_TRACE_AGENT_URL")
-                .unwrap_or_else(|_| String::from("http://localhost:8126")),
+            trace_agent_url: env::var("DD_TRACE_AGENT_URL").ok(),
             metrics_agent_url: env::var("DD_METRICS_AGENT_URL")
                 .unwrap_or_else(|_| String::from("localhost:8125")),
         }
@@ -115,10 +114,9 @@ impl ConfigBuilder {
 
     /// Sets the `trace_agent_url` for the config.
     ///
-    /// By default, this is the value of `DD_TRACE_AGENT_URL`, or otherwise
-    /// `"http://localhost:8126"`.
-    pub fn trace_agent_url(mut self, trace_agent_url: impl Into<String>) -> Self {
-        self.trace_agent_url = trace_agent_url.into();
+    /// By default, this is the value of `DD_TRACE_AGENT_URL`, or otherwise `None`.
+    pub fn trace_agent_url(mut self, trace_agent_url: Option<impl Into<String>>) -> Self {
+        self.trace_agent_url = trace_agent_url.map(Into::into);
         self
     }
 

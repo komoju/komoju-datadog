@@ -56,11 +56,17 @@ impl Tracer {
     /// Panics if called from an async context.
     #[must_use = "Dropping the guard will de-initialize OpenTelemetry instrumentation"]
     pub fn new(config: &crate::Config) -> Self {
+        let Some(ref trace_agent_url) = config.trace_agent_url else {
+            return Self {
+                shutdown: Box::new(|| {}),
+            };
+        };
+
         let provider = opentelemetry_datadog::new_pipeline()
             .with_service_name(&config.service)
             .with_env(&config.env)
             .with_version(&config.version)
-            .with_agent_endpoint(&config.trace_agent_url)
+            .with_agent_endpoint(trace_agent_url)
             .with_name_mapping(|span, _| {
                 span.attributes
                     .iter()
