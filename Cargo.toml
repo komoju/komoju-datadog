@@ -5,6 +5,7 @@ edition = "2024"
 description = "Opinionated DataDog instrumentation toolkit"
 license-file = "LICENSE"
 repository = "https://github.com/komoju/komoju-datadog"
+rust-version = "1.86"
 
 [features]
 default = []
@@ -13,7 +14,6 @@ axum = ["dep:axum", "dep:pin-project-lite", "dep:futures-util", "dep:tower"]
 sqlx = ["dep:sqlx-datadog"]
 
 [dependencies]
-bon = "3"
 datadog-formatting-layer = "6"
 dogstatsd = "0.12"
 http = "1"

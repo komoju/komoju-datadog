@@ -1,5 +1,7 @@
 //! Configuration
 
+use std::env;
+
 /// Observability configuration.
 ///
 /// This is used to configure how data is sent to Datadog, as well as default tags.
@@ -17,7 +19,7 @@
 ///   .version("1.2.3")
 ///   .build();
 /// ```
-#[derive(Debug, bon::Builder)]
+#[derive(Debug)]
 #[non_exhaustive]
 pub struct Config {
     /// The `service` tag to use for metrics and traces.
@@ -25,7 +27,6 @@ pub struct Config {
     /// Can also be set via the `DD_SERVICE` environment variable.
     ///
     /// Defaults to `unknown`.
-    #[builder(into, default = default_service())]
     pub service: String,
 
     /// The `env` tag to use for metrics and traces.
@@ -33,7 +34,6 @@ pub struct Config {
     /// Can also be set via the `DD_ENV` environment variable.
     ///
     /// Defaults to `development`.
-    #[builder(into, default = default_env())]
     pub env: String,
 
     /// The `version` tag to use for metrics and traces.
@@ -41,7 +41,6 @@ pub struct Config {
     /// Can also be set via the `DD_VERSION` environment variable.
     ///
     /// Defaults to `unknown`.
-    #[builder(into, default = default_version())]
     pub version: String,
 
     /// The Datadog agent URL to send traces to.
@@ -49,7 +48,6 @@ pub struct Config {
     /// Can also be set via the `DD_TRACE_AGENT_URL` environment variable.
     ///
     /// Defaults to `http://localhost:8126`.
-    #[builder(into, default = default_trace_agent_uri())]
     pub trace_agent_url: String,
 
     /// The Datadog agent URL to send statsD metrics to.
@@ -57,26 +55,97 @@ pub struct Config {
     /// Can also be set via the `DD_METRICS_AGENT_URL` environment variable.
     ///
     /// Defaults to `localhost:8125`.
-    #[builder(into, default = default_metrics_agent_uri())]
     pub metrics_agent_url: String,
 }
 
-fn default_service() -> String {
-    std::env::var("DD_SERVICE").unwrap_or_else(|_| String::from("unknown"))
+impl Config {
+    /// Creates a new builder to construct a `Config`.
+    pub fn builder() -> ConfigBuilder {
+        ConfigBuilder::default()
+    }
 }
 
-fn default_env() -> String {
-    std::env::var("DD_ENV").unwrap_or_else(|_| String::from("development"))
+/// Builder to construct a [`Config`].
+pub struct ConfigBuilder {
+    service: String,
+    env: String,
+    version: String,
+    trace_agent_url: String,
+    metrics_agent_url: String,
 }
 
-fn default_version() -> String {
-    std::env::var("DD_VERSION").unwrap_or_else(|_| String::from("unknown"))
+impl Default for ConfigBuilder {
+    fn default() -> Self {
+        Self {
+            service: env::var("DD_SERVICE").unwrap_or_else(|_| String::from("unknown")),
+            env: env::var("DD_ENV").unwrap_or_else(|_| String::from("development")),
+            version: env::var("DD_VERSION").unwrap_or_else(|_| String::from("unknown")),
+            trace_agent_url: env::var("DD_TRACE_AGENT_URL")
+                .unwrap_or_else(|_| String::from("http://localhost:8126")),
+            metrics_agent_url: env::var("DD_METRICS_AGENT_URL")
+                .unwrap_or_else(|_| String::from("localhost:8125")),
+        }
+    }
 }
 
-fn default_trace_agent_uri() -> String {
-    std::env::var("DD_TRACE_AGENT_URL").unwrap_or_else(|_| String::from("http://localhost:8126"))
-}
+impl ConfigBuilder {
+    /// Sets the `service` for the config.
+    ///
+    /// By default, this is the value of `DD_SERVICE`, or otherwise `"unknown"`.
+    pub fn service(mut self, service: impl Into<String>) -> Self {
+        self.service = service.into();
+        self
+    }
 
-fn default_metrics_agent_uri() -> String {
-    std::env::var("DD_METRICS_AGENT_URL").unwrap_or_else(|_| String::from("localhost:8125"))
+    /// Sets the `env` for the config.
+    ///
+    /// By default, this is the value of `DD_ENV`, or otherwise `"development"`.
+    pub fn env(mut self, env: impl Into<String>) -> Self {
+        self.env = env.into();
+        self
+    }
+
+    /// Sets the `version` for the config.
+    ///
+    /// By default, this is the value of `DD_VERSION`, or otherwise `"unknown"`.
+    pub fn version(mut self, version: impl Into<String>) -> Self {
+        self.version = version.into();
+        self
+    }
+
+    /// Sets the `trace_agent_url` for the config.
+    ///
+    /// By default, this is the value of `DD_TRACE_AGENT_URL`, or otherwise
+    /// `"http://localhost:8126"`.
+    pub fn trace_agent_url(mut self, trace_agent_url: impl Into<String>) -> Self {
+        self.trace_agent_url = trace_agent_url.into();
+        self
+    }
+
+    /// Sets the `metrics_agent_url` for the config.
+    ///
+    /// By default, this is the value of `DD_METRICS_AGENT_URL`, or otherwise `"localhost:8126"`.
+    pub fn metrics_agent_url(mut self, metrics_agent_url: impl Into<String>) -> Self {
+        self.metrics_agent_url = metrics_agent_url.into();
+        self
+    }
+
+    /// Consumes the builder, returning the constructed `Config`.
+    pub fn build(self) -> Config {
+        let Self {
+            service,
+            env,
+            version,
+            trace_agent_url,
+            metrics_agent_url,
+        } = self;
+
+        Config {
+            service,
+            env,
+            version,
+            trace_agent_url,
+            metrics_agent_url,
+        }
+    }
 }
