@@ -47,7 +47,7 @@ pub struct Config {
     ///
     /// Can also be set via the `DD_TRACE_AGENT_URL` environment variable.
     ///
-    /// Defaults to `http://localhost:8126`.
+    /// Defaults to `None`.
     pub trace_agent_url: Option<String>,
 
     /// The Datadog agent URL to send statsD metrics to.
