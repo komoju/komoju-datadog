@@ -1,9 +1,18 @@
+## [0.2.2] - 2025-10-06
+
+### 📚 Documentation
+
+- Fix the documented default value for Config's trace_agent_url
 ## [0.2.1] - 2025-10-03
 
 ### 💼 Other
 
 - *(deps)* Bump axum from 0.8.4 to 0.8.6
 - *(deps)* Bump regex from 1.11.2 to 1.11.3
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.2.1
 ## [0.2.0] - 2025-10-02
 
 ### 🚀 Features
