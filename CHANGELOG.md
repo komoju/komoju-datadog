@@ -1,8 +1,17 @@
+## [0.2.3] - 2025-10-08
+
+### 🐛 Bug Fixes
+
+- Don't disable tracing altogether without DD_AGENT_URL
 ## [0.2.2] - 2025-10-06
 
 ### 📚 Documentation
 
 - Fix the documented default value for Config's trace_agent_url
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.2.2
 ## [0.2.1] - 2025-10-03
 
 ### 💼 Other
