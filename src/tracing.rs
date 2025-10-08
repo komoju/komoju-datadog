@@ -56,59 +56,60 @@ impl Tracer {
     /// Panics if called from an async context.
     #[must_use = "Dropping the guard will de-initialize OpenTelemetry instrumentation"]
     pub fn new(config: &crate::Config) -> Self {
-        let Some(ref trace_agent_url) = config.trace_agent_url else {
-            return Self {
-                shutdown: Box::new(|| {}),
-            };
+        let provider = if let Some(ref trace_agent_url) = config.trace_agent_url {
+            let provider = opentelemetry_datadog::new_pipeline()
+                .with_service_name(&config.service)
+                .with_env(&config.env)
+                .with_version(&config.version)
+                .with_agent_endpoint(trace_agent_url)
+                .with_name_mapping(|span, _| {
+                    span.attributes
+                        .iter()
+                        .find(|k| k.key.as_str() == "operation")
+                        .and_then(|kv| match &kv.value {
+                            opentelemetry::Value::String(v) => Some(v.as_str()),
+                            _ => None,
+                        })
+                        .unwrap_or(&*span.name)
+                })
+                .with_resource_mapping(|span, _| {
+                    span.attributes
+                        .iter()
+                        .find(|k| k.key.as_str() == "resource")
+                        .and_then(|kv| match &kv.value {
+                            opentelemetry::Value::String(v) => Some(v.as_str()),
+                            _ => None,
+                        })
+                        .unwrap_or_default()
+                })
+                .with_http_client(
+                    #[cfg(feature = "aws_ecs")]
+                    reqwest::blocking::Client::builder()
+                        .default_headers({
+                            let mut headers = HeaderMap::new();
+                            if let Some(container_id) = crate::aws::container_id() {
+                                headers.insert(
+                                    "Datadog-Container-ID",
+                                    HeaderValue::from_static(container_id),
+                                );
+                            }
+                            headers
+                        })
+                        .build()
+                        .expect("failed to build OTel export reqwest client"),
+                    #[cfg(not(feature = "aws_ecs"))]
+                    reqwest::blocking::Client::new(),
+                )
+                .install_batch()
+                .expect("failed to setup OpenTelemetry");
+
+            opentelemetry::global::set_tracer_provider(provider.clone());
+
+            Some(provider)
+        } else {
+            None
         };
 
-        let provider = opentelemetry_datadog::new_pipeline()
-            .with_service_name(&config.service)
-            .with_env(&config.env)
-            .with_version(&config.version)
-            .with_agent_endpoint(trace_agent_url)
-            .with_name_mapping(|span, _| {
-                span.attributes
-                    .iter()
-                    .find(|k| k.key.as_str() == "operation")
-                    .and_then(|kv| match &kv.value {
-                        opentelemetry::Value::String(v) => Some(v.as_str()),
-                        _ => None,
-                    })
-                    .unwrap_or(&*span.name)
-            })
-            .with_resource_mapping(|span, _| {
-                span.attributes
-                    .iter()
-                    .find(|k| k.key.as_str() == "resource")
-                    .and_then(|kv| match &kv.value {
-                        opentelemetry::Value::String(v) => Some(v.as_str()),
-                        _ => None,
-                    })
-                    .unwrap_or_default()
-            })
-            .with_http_client(
-                #[cfg(feature = "aws_ecs")]
-                reqwest::blocking::Client::builder()
-                    .default_headers({
-                        let mut headers = HeaderMap::new();
-                        if let Some(container_id) = crate::aws::container_id() {
-                            headers.insert(
-                                "Datadog-Container-ID",
-                                HeaderValue::from_static(container_id),
-                            );
-                        }
-                        headers
-                    })
-                    .build()
-                    .expect("failed to build OTel export reqwest client"),
-                #[cfg(not(feature = "aws_ecs"))]
-                reqwest::blocking::Client::new(),
-            )
-            .install_batch()
-            .expect("failed to setup OpenTelemetry");
-
-        opentelemetry::global::set_tracer_provider(provider.clone());
         opentelemetry::global::set_text_map_propagator(
             opentelemetry::propagation::composite::TextMapCompositePropagator::new(vec![
                 Box::new(opentelemetry_datadog::DatadogPropagator::default()),
@@ -124,7 +125,11 @@ impl Tracer {
                         .from_env_lossy(),
                 )
                 .with(tracing_subscriber::fmt::layer().pretty())
-                .with(tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing")))
+                .with(
+                    provider
+                        .clone()
+                        .map(|p| tracing_opentelemetry::layer().with_tracer(p.tracer("tracing"))),
+                )
                 .init();
         } else {
             tracing_subscriber::registry()
@@ -134,16 +139,25 @@ impl Tracer {
                         .from_env_lossy(),
                 )
                 .with(DatadogFormattingLayer::default())
-                .with(tracing_opentelemetry::layer().with_tracer(provider.tracer("tracing")))
+                .with(
+                    provider
+                        .clone()
+                        .map(|p| tracing_opentelemetry::layer().with_tracer(p.tracer("tracing"))),
+                )
                 .init();
         };
 
-        Self {
-            shutdown: Box::new(move || {
-                provider
-                    .shutdown()
-                    .expect("failed to shutdown tracing provider");
-            }),
+        match provider {
+            Some(provider) => Self {
+                shutdown: Box::new(move || {
+                    provider
+                        .shutdown()
+                        .expect("failed to shutdown tracing provider");
+                }),
+            },
+            None => Self {
+                shutdown: Box::new(|| {}),
+            },
         }
     }
 }
