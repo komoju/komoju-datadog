@@ -60,12 +60,22 @@ fn make_span_from_request<B>(req: &Request<B>) -> Span {
         error.message = Empty,
         "span.type" = "web",
         span.kind = "server",
+
+        // Our internal authentication claims
         auth.method = Empty,
         auth.user_uuid = Empty,
         auth.merchant_uuid = Empty,
         auth.account_uuid = Empty,
         auth.role = Empty,
         auth.api_version = Empty,
+
+        // DataDog AppSec identity tags
+        usr.id = Empty,
+        usr.email = Empty,
+        usr.session_id = Empty,
+        usr.role = Empty,
+        usr.merchant = Empty,
+        usr.account = Empty,
     )
 }
 
