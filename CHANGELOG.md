@@ -1,8 +1,21 @@
+## [0.3.0] - 2025-10-14
+
+### 🚀 Features
+
+- *(axum)* Add DataDog identity tracking tags to axum spans
+
+### 💼 Other
+
+- *(deps)* Bump regex from 1.11.3 to 1.12.1
 ## [0.2.3] - 2025-10-08
 
 ### 🐛 Bug Fixes
 
 - Don't disable tracing altogether without DD_AGENT_URL
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.2.3
 ## [0.2.2] - 2025-10-06
 
 ### 📚 Documentation
