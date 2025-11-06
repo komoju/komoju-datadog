@@ -3,7 +3,7 @@
 //! Adapted from <https://github.com/will-bank/datadog-tracing>.
 
 use axum::extract::{ConnectInfo, MatchedPath};
-use http::{Request, Response};
+use http::{Request, Response, header};
 use pin_project_lite::pin_project;
 use std::{
     error::Error,
@@ -14,15 +14,11 @@ use std::{
 };
 use tower::{Layer, Service};
 use tracing::{Span, field::Empty};
-use tracing_opentelemetry::OpenTelemetrySpanExt;
-use tracing_opentelemetry_instrumentation_sdk::{
-    TRACING_TARGET,
-    http::{self as otel_http, http_flavor, http_host, http_method, url_scheme, user_agent},
-};
+use tracing_datadog::http::DistributedTracingContext;
 
 /// Creates a span from a request.
 fn make_span_from_request<B>(req: &Request<B>) -> Span {
-    let http_method = http_method(req.method());
+    let http_method = req.method().as_str();
     let client_ip = req
         .headers()
         .get("X-Forwarded-For")
@@ -37,29 +33,30 @@ fn make_span_from_request<B>(req: &Request<B>) -> Span {
         .get("X-Request-Id")
         .and_then(|h| h.to_str().ok().map(|s| s.to_string()));
     tracing::info_span!(
-        target: TRACING_TARGET,
         "HTTP request",
         operation = "axum.request",
         resource = format!("{} {}", http_method, crate::http::path_group(req.uri().path())),
-        http.base_url = http_host(req),
+        http.base_url = req.headers().get(header::HOST).and_then(|h| h.to_str().ok()).or(req.uri().host()),
         http.method = %http_method,
         http.url = req.uri().path(),
-        http.useragent = user_agent(req),
+        http.useragent = req.headers().get(header::USER_AGENT).and_then(|h| h.to_str().ok()),
         http.route = Empty,
         http.client.ip = client_ip,
         http.request_id = request_id,
         http.status_code = Empty,
-        network.protocol.version = %http_flavor(req.version()),
-        server.address = http_host(req),
-        url.scheme = url_scheme(req.uri()),
-        otel.name = %http_method,
-        otel.kind = ?opentelemetry::trace::SpanKind::Server,
-        otel.status_code = Empty,
+        network.protocol.version = match req.version() {
+            http::Version::HTTP_10 => "1.0",
+            http::Version::HTTP_11 => "1.1",
+            http::Version::HTTP_2 => "2.0",
+            http::Version::HTTP_3 => "3.0",
+            _ => "",
+        },
+        server.address = req.uri().host(),
+        url.scheme = req.uri().scheme_str(),
         request_id = Empty,
         error.type = Empty,
         error.message = Empty,
-        "span.type" = "web",
-        span.kind = "server",
+        span.type = "web",
 
         // Our internal authentication claims
         auth.method = Empty,
@@ -165,11 +162,14 @@ where
             let span = make_span_from_request(&req);
 
             let route = http_route(&req);
-            let method = http_method(req.method());
+            let method = req.method().as_str();
 
+            span.record("resource", format!("{method} {route}").trim());
             span.record("http.route", route);
-            span.record("otel.name", format!("{method} {route}").trim());
-            span.set_parent(otel_http::extract_context(req.headers()));
+
+            span.set_context(tracing_datadog::http::DataDogContext::from_w3c_headers(
+                req.headers(),
+            ));
 
             span
         };

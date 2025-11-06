@@ -1,9 +1,10 @@
 //! HTTP-related utilities
 
-use http::{HeaderMap, HeaderName, HeaderValue};
+use http::HeaderMap;
 use itertools::Itertools;
 use regex::Regex;
-use std::{str::FromStr, sync::LazyLock};
+use std::sync::LazyLock;
+use tracing_datadog::http::DistributedTracingContext;
 
 /// Returns a Datadog-style path group from a request path, with dynamic segments replaced by '?'.
 ///
@@ -46,37 +47,7 @@ static STATIC_SEGMENT_RE: LazyLock<Regex> =
 /// attach_tracing_headers(request.headers_mut());
 /// ```
 pub fn attach_tracing_headers(headers: &mut HeaderMap) {
-    opentelemetry::global::get_text_map_propagator(|propagator| {
-        use tracing_opentelemetry::OpenTelemetrySpanExt;
-        let context = tracing::Span::current().context();
-        propagator.inject_context(&context, &mut HeaderCarrier::new(headers));
-    });
-}
-
-/// A wrapper for trait implementation, as we need to implement
-/// [`opentelemetry::propagation::Injector`] for [`HeaderMap`], neither of which we own.
-struct HeaderCarrier<'a> {
-    headers: &'a mut HeaderMap,
-}
-
-impl<'a> HeaderCarrier<'a> {
-    pub fn new(headers: &'a mut HeaderMap) -> Self {
-        HeaderCarrier { headers }
-    }
-}
-
-impl HeaderCarrier<'_> {
-    fn set_inner(&mut self, key: &str, value: String) {
-        let header_name = HeaderName::from_str(key).expect("Must be header name");
-        let header_value = HeaderValue::from_str(&value).expect("Must be a header value");
-        self.headers.insert(header_name, header_value);
-    }
-}
-
-impl opentelemetry::propagation::Injector for HeaderCarrier<'_> {
-    fn set(&mut self, key: &str, value: String) {
-        self.set_inner(key, value)
-    }
+    headers.extend(tracing::Span::current().get_context().to_w3c_headers());
 }
 
 #[cfg(test)]

@@ -14,9 +14,5 @@ updates:
     groups:
       otel:
         patterns:
-          - datadog-formatting-layer
-          - opentelemetry
-          - opentelemetry-*
-          - opentelemetry_*
           - tracing
           - tracing-*
