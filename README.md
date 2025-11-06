@@ -32,7 +32,7 @@ use komoju_datadog::{Config, tracing::Tracer, statsd::StatsD};
 fn main() {
     let o11y_config = Config::builder().service("my-service").build();
     StatsD::init_global(&o11y_config);
-    let _tracer_guard = Tracer::new(&o11y_config);
+    Tracer::new(&o11y_config);
 
     // Start the service here, e.g. via tokio::runtime::Runtime::block_on.
 }

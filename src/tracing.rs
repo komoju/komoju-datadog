@@ -7,10 +7,7 @@
 //!
 //! Traces are emitted to the Datadog agent.
 
-use datadog_formatting_layer::DatadogFormattingLayer;
-#[cfg(feature = "aws_ecs")]
-use http::{HeaderMap, HeaderValue};
-use opentelemetry::trace::TracerProvider;
+use tracing_datadog::DataDogTraceLayer;
 use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 /// OpenTelemetry instrumentation. Should be initialized once to install the global handlers and
@@ -41,129 +38,45 @@ use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::Subscr
 /// }
 /// ```
 #[allow(clippy::needless_doctest_main)]
-pub struct Tracer {
-    /// Graceful shutdown handler, called when dropped.
-    shutdown: Box<dyn Fn()>,
-}
+pub struct Tracer;
 
 impl Tracer {
     /// Initializes tracing instrumentation.
     ///
-    /// The returned value acts as a guard for RAII destruction.
-    ///
     /// # Panics
     ///
     /// Panics if called from an async context.
-    #[must_use = "Dropping the guard will de-initialize OpenTelemetry instrumentation"]
     pub fn new(config: &crate::Config) -> Self {
-        let provider = if let Some(ref trace_agent_url) = config.trace_agent_url {
-            let provider = opentelemetry_datadog::new_pipeline()
-                .with_service_name(&config.service)
-                .with_env(&config.env)
-                .with_version(&config.version)
-                .with_agent_endpoint(trace_agent_url)
-                .with_name_mapping(|span, _| {
-                    span.attributes
-                        .iter()
-                        .find(|k| k.key.as_str() == "operation")
-                        .and_then(|kv| match &kv.value {
-                            opentelemetry::Value::String(v) => Some(v.as_str()),
-                            _ => None,
-                        })
-                        .unwrap_or(&*span.name)
-                })
-                .with_resource_mapping(|span, _| {
-                    span.attributes
-                        .iter()
-                        .find(|k| k.key.as_str() == "resource")
-                        .and_then(|kv| match &kv.value {
-                            opentelemetry::Value::String(v) => Some(v.as_str()),
-                            _ => None,
-                        })
-                        .unwrap_or_default()
-                })
-                .with_http_client(
-                    #[cfg(feature = "aws_ecs")]
-                    reqwest::blocking::Client::builder()
-                        .default_headers({
-                            let mut headers = HeaderMap::new();
-                            if let Some(container_id) = crate::aws::container_id() {
-                                headers.insert(
-                                    "Datadog-Container-ID",
-                                    HeaderValue::from_static(container_id),
-                                );
-                            }
-                            headers
-                        })
-                        .build()
-                        .expect("failed to build OTel export reqwest client"),
-                    #[cfg(not(feature = "aws_ecs"))]
-                    reqwest::blocking::Client::new(),
-                )
-                .install_batch()
-                .expect("failed to setup OpenTelemetry");
-
-            opentelemetry::global::set_tracer_provider(provider.clone());
-
-            Some(provider)
-        } else {
-            None
+        let dd_trace_layer = {
+            #[cfg_attr(not(feature = "aws_ecs"), allow(unused_mut))]
+            let mut builder = DataDogTraceLayer::builder()
+                .service(&config.service)
+                .env(&config.env)
+                .version(&config.version)
+                .agent_address("localhost:8126");
+            #[cfg(feature = "aws_ecs")]
+            if let Some(container_id) = crate::aws::container_id() {
+                builder = builder.container_id(container_id);
+            }
+            builder
+                .build()
+                .expect("failed to build DataDog trace layer")
         };
 
-        opentelemetry::global::set_text_map_propagator(
-            opentelemetry::propagation::composite::TextMapCompositePropagator::new(vec![
-                Box::new(opentelemetry_datadog::DatadogPropagator::default()),
-                Box::new(opentelemetry_sdk::propagation::TraceContextPropagator::default()),
-            ]),
-        );
+        tracing_subscriber::registry()
+            .with(
+                tracing_subscriber::EnvFilter::builder()
+                    .with_default_directive(LevelFilter::INFO.into())
+                    .from_env_lossy(),
+            )
+            .with(if config.env == "development" {
+                Some(tracing_subscriber::fmt::layer().pretty())
+            } else {
+                None
+            })
+            .with(dd_trace_layer)
+            .init();
 
-        if config.env == "development" {
-            tracing_subscriber::registry()
-                .with(
-                    tracing_subscriber::EnvFilter::builder()
-                        .with_default_directive(LevelFilter::INFO.into())
-                        .from_env_lossy(),
-                )
-                .with(tracing_subscriber::fmt::layer().pretty())
-                .with(
-                    provider
-                        .clone()
-                        .map(|p| tracing_opentelemetry::layer().with_tracer(p.tracer("tracing"))),
-                )
-                .init();
-        } else {
-            tracing_subscriber::registry()
-                .with(
-                    tracing_subscriber::EnvFilter::builder()
-                        .with_default_directive(LevelFilter::INFO.into())
-                        .from_env_lossy(),
-                )
-                .with(DatadogFormattingLayer::default())
-                .with(
-                    provider
-                        .clone()
-                        .map(|p| tracing_opentelemetry::layer().with_tracer(p.tracer("tracing"))),
-                )
-                .init();
-        };
-
-        match provider {
-            Some(provider) => Self {
-                shutdown: Box::new(move || {
-                    provider
-                        .shutdown()
-                        .expect("failed to shutdown tracing provider");
-                }),
-            },
-            None => Self {
-                shutdown: Box::new(|| {}),
-            },
-        }
-    }
-}
-
-impl Drop for Tracer {
-    fn drop(&mut self) {
-        (self.shutdown)();
+        Self
     }
 }
