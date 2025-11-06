@@ -1,3 +1,14 @@
+## [0.4.0] - 2025-11-06
+
+### 🚀 Features
+
+- [**breaking**] Move from tracing-opentelemetry to tracing-datadog
+
+### 💼 Other
+
+- *(deps)* Bump reqwest from 0.12.23 to 0.12.24
+- *(deps)* Bump regex from 1.12.1 to 1.12.2
+- *(deps)* Bump tokio from 1.47.1 to 1.48.0
 ## [0.3.0] - 2025-10-14
 
 ### 🚀 Features
@@ -7,6 +18,10 @@
 ### 💼 Other
 
 - *(deps)* Bump regex from 1.11.3 to 1.12.1
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.3.0
 ## [0.2.3] - 2025-10-08
 
 ### 🐛 Bug Fixes
