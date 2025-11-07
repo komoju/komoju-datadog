@@ -1,3 +1,8 @@
+## [0.4.1] - 2025-11-07
+
+### 🐛 Bug Fixes
+
+- [**breaking**] Correctly set and document the trace agent URL
 ## [0.4.0] - 2025-11-06
 
 ### 🚀 Features
@@ -9,6 +14,10 @@
 - *(deps)* Bump reqwest from 0.12.23 to 0.12.24
 - *(deps)* Bump regex from 1.12.1 to 1.12.2
 - *(deps)* Bump tokio from 1.47.1 to 1.48.0
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.4.0
 ## [0.3.0] - 2025-10-14
 
 ### 🚀 Features
