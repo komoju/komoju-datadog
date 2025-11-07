@@ -14,7 +14,7 @@ use std::{
 };
 use tower::{Layer, Service};
 use tracing::{Span, field::Empty};
-use tracing_datadog::http::DistributedTracingContext;
+use tracing_datadog::http::{DatadogContext, DistributedTracingContext};
 
 /// Creates a span from a request.
 fn make_span_from_request<B>(req: &Request<B>) -> Span {
@@ -66,7 +66,7 @@ fn make_span_from_request<B>(req: &Request<B>) -> Span {
         auth.role = Empty,
         auth.api_version = Empty,
 
-        // DataDog AppSec identity tags
+        // Datadog AppSec identity tags
         usr.id = Empty,
         usr.email = Empty,
         usr.session_id = Empty,
@@ -167,9 +167,7 @@ where
             span.record("resource", format!("{method} {route}").trim());
             span.record("http.route", route);
 
-            span.set_context(tracing_datadog::http::DataDogContext::from_w3c_headers(
-                req.headers(),
-            ));
+            span.set_context(DatadogContext::from_w3c_headers(req.headers()));
 
             span
         };

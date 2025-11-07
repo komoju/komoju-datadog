@@ -7,7 +7,7 @@ use std::{ops::Deref, sync::OnceLock};
 /// Global StatsD instance, if used.
 static GLOBAL_STATSD: OnceLock<StatsD> = OnceLock::new();
 
-/// A client for submitting metrics to the DataDog agent.
+/// A client for submitting metrics to the Datadog agent.
 ///
 /// Includes default tags for unified service tagging.
 ///

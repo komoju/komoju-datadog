@@ -2,7 +2,7 @@
 name = "komoju-datadog"
 version = "0.4.1"
 edition = "2024"
-description = "Opinionated DataDog instrumentation toolkit"
+description = "Opinionated Datadog instrumentation toolkit"
 license-file = "LICENSE"
 repository = "https://github.com/komoju/komoju-datadog"
 rust-version = "1.86"
@@ -20,7 +20,7 @@ itertools = "0.14"
 regex = "1"
 reqwest = { version = "0.12", default-features = false, features = ["json"] }
 tracing = "0.1"
-tracing-datadog = { version = "0.1", features = ["http"] }
+tracing-datadog = { version = "0.2", features = ["http"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "parking_lot"] }
 
 # AWS ECS support

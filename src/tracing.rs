@@ -7,7 +7,7 @@
 //!
 //! Traces are emitted to the Datadog agent.
 
-use tracing_datadog::DataDogTraceLayer;
+use tracing_datadog::DatadogTraceLayer;
 use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 /// OpenTelemetry instrumentation. Should be initialized once to install the global handlers and
@@ -50,7 +50,7 @@ impl Tracer {
         let dd_trace_layer = match &config.trace_agent_url {
             Some(trace_agent_url) => {
                 #[cfg_attr(not(feature = "aws_ecs"), allow(unused_mut))]
-                let mut builder = DataDogTraceLayer::builder()
+                let mut builder = DatadogTraceLayer::builder()
                     .service(&config.service)
                     .env(&config.env)
                     .version(&config.version)
@@ -62,7 +62,7 @@ impl Tracer {
                 Some(
                     builder
                         .build()
-                        .expect("failed to build DataDog trace layer"),
+                        .expect("failed to build Datadog trace layer"),
                 )
             }
             _ => None,

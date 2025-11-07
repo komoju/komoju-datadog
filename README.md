@@ -1,6 +1,6 @@
-# KOMOJU DataDog
+# KOMOJU Datadog
 
-This is our in-house DataDog integration for Rust. It is similar to DataDog's
+This is our in-house Datadog integration for Rust. It is similar to Datadog's
 own integrations for other languages, providing support for the following:
 
 - Logs and tracing via `tracing`, with automatic correlation
@@ -32,7 +32,7 @@ fn main() {
 ### Tracing
 
 Once the tracer is initialized, `tracing` spans can be used to create spans on
-DataDog, either manually or via the `instrument` macro.
+Datadog, either manually or via the `instrument` macro.
 
 ```rust
 use tracing::{info, info_span, instrument};
@@ -56,15 +56,15 @@ fn answer(question: &str) -> Result<u64, &'static str> {
 }
 ```
 
-Certain span tags have special semantic meaning in DataDog:
+Certain span tags have special semantic meaning in Datadog:
 
-- `operation` will be mapped to the operation name in DataDog, defaulting to 
+- `operation` will be mapped to the operation name in Datadog, defaulting to 
   the span name otherwise
-- `resource` will be mapped to the resource name in DataDog
+- `resource` will be mapped to the resource name in Datadog
 
 #### Errors
 
-Errors can be rendered in DataDog by including the following tags:
+Errors can be rendered in Datadog by including the following tags:
 
 - `error.type`
 - `error.msg`
@@ -72,7 +72,7 @@ Errors can be rendered in DataDog by including the following tags:
 
 ### Metrics
 
-Metrics can be sent to DataDog using the `StatsD` struct. A global instance is
+Metrics can be sent to Datadog using the `StatsD` struct. A global instance is
 available via `StatsD::global()` after initialization.
 
 ```rust
