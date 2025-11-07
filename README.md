@@ -10,15 +10,6 @@ own integrations for other languages, providing support for the following:
 - AWS ECS container correlation, container metrics
 - SQLx integration, correct tracing for SQL queries
 
-## Installation
-
-Add this to your `Cargo.toml`:
-
-```toml
-[dependencies]
-komoju-datadog = "0.1"
-```
-
 ## Usage
 
 This library is configured through the `Config` struct, which automatically
