@@ -47,20 +47,25 @@ impl Tracer {
     ///
     /// Panics if called from an async context.
     pub fn new(config: &crate::Config) -> Self {
-        let dd_trace_layer = {
-            #[cfg_attr(not(feature = "aws_ecs"), allow(unused_mut))]
-            let mut builder = DataDogTraceLayer::builder()
-                .service(&config.service)
-                .env(&config.env)
-                .version(&config.version)
-                .agent_address("localhost:8126");
-            #[cfg(feature = "aws_ecs")]
-            if let Some(container_id) = crate::aws::container_id() {
-                builder = builder.container_id(container_id);
+        let dd_trace_layer = match &config.trace_agent_url {
+            Some(trace_agent_url) => {
+                #[cfg_attr(not(feature = "aws_ecs"), allow(unused_mut))]
+                let mut builder = DataDogTraceLayer::builder()
+                    .service(&config.service)
+                    .env(&config.env)
+                    .version(&config.version)
+                    .agent_address(trace_agent_url);
+                #[cfg(feature = "aws_ecs")]
+                if let Some(container_id) = crate::aws::container_id() {
+                    builder = builder.container_id(container_id);
+                }
+                Some(
+                    builder
+                        .build()
+                        .expect("failed to build DataDog trace layer"),
+                )
             }
-            builder
-                .build()
-                .expect("failed to build DataDog trace layer")
+            _ => None,
         };
 
         tracing_subscriber::registry()

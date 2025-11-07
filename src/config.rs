@@ -114,6 +114,10 @@ impl ConfigBuilder {
 
     /// Sets the `trace_agent_url` for the config.
     ///
+    /// The format is `host:port`.
+    ///
+    /// If this value is not set, tracing will be disabled.
+    ///
     /// By default, this is the value of `DD_TRACE_AGENT_URL`, or otherwise `None`.
     pub fn trace_agent_url(mut self, trace_agent_url: Option<impl Into<String>>) -> Self {
         self.trace_agent_url = trace_agent_url.map(Into::into);
@@ -121,6 +125,8 @@ impl ConfigBuilder {
     }
 
     /// Sets the `metrics_agent_url` for the config.
+    ///
+    /// The format is `host:port`.
     ///
     /// By default, this is the value of `DD_METRICS_AGENT_URL`, or otherwise `"localhost:8126"`.
     pub fn metrics_agent_url(mut self, metrics_agent_url: impl Into<String>) -> Self {
