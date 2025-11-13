@@ -1,8 +1,17 @@
+## [0.4.4] - 2025-11-13
+
+### 💼 Other
+
+- *(deps)* Update tracing-datadog to 0.3.0
 ## [0.4.3] - 2025-11-13
 
 ### 🐛 Bug Fixes
 
 - Enable structured logs outside of development environments
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.4.3
 ## [0.4.2] - 2025-11-07
 
 ### 📚 Documentation
