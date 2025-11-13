@@ -1,9 +1,18 @@
+## [0.4.3] - 2025-11-13
+
+### 🐛 Bug Fixes
+
+- Enable structured logs outside of development environments
 ## [0.4.2] - 2025-11-07
 
 ### 📚 Documentation
 
 - Remove the outdated installation section from the readme
 - Correctly downcase the second D in Datadog
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.4.2
 ## [0.4.1] - 2025-11-07
 
 ### 🐛 Bug Fixes
