@@ -54,7 +54,8 @@ impl Tracer {
                     .service(&config.service)
                     .env(&config.env)
                     .version(&config.version)
-                    .agent_address(trace_agent_url);
+                    .agent_address(trace_agent_url)
+                    .enable_logs(config.env != "development");
                 #[cfg(feature = "aws_ecs")]
                 if let Some(container_id) = crate::aws::container_id() {
                     builder = builder.container_id(container_id);
