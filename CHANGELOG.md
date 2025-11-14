@@ -1,8 +1,17 @@
+## [0.4.8] - 2025-11-14
+
+### 🐛 Bug Fixes
+
+- *(axum)* Set span.kind to server for axum handler spans
 ## [0.4.7] - 2025-11-14
 
 ### 🐛 Bug Fixes
 
 - *(axum)* Don't overwrite the operation with an empty route
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.4.7
 ## [0.4.6] - 2025-11-14
 
 ### 💼 Other
