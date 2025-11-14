@@ -1220,9 +1220,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-datadog"
-version = "0.3.0"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04e4bd0e859d16ff1fb8eba8163f5b1a06ab49457698f52d0f8faff2b997ceb9"
+checksum = "3e25d1a17e97379033ec804426f6239c2c9c11efa2caf78a02e87300bfb43585"
 dependencies = [
  "http",
  "jiff",
