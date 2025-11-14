@@ -161,11 +161,13 @@ where
         let span = {
             let span = make_span_from_request(&req);
 
-            let route = http_route(&req);
             let method = req.method().as_str();
+            let route = http_route(&req);
 
-            span.record("resource", format!("{method} {route}").trim());
-            span.record("http.route", route);
+            if !route.is_empty() {
+                span.record("resource", format!("{method} {route}").trim());
+                span.record("http.route", route);
+            }
 
             span.set_context(DatadogContext::from_w3c_headers(req.headers()));
 
