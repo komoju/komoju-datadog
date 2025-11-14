@@ -1,6 +1,6 @@
 [package]
 name = "komoju-datadog"
-version = "0.4.5"
+version = "0.4.6"
 edition = "2024"
 description = "Opinionated Datadog instrumentation toolkit"
 license-file = "LICENSE"
