@@ -56,6 +56,7 @@ fn make_span_from_request<B>(req: &Request<B>) -> Span {
         request_id = Empty,
         error.type = Empty,
         error.message = Empty,
+        span.kind = "server",
         span.type = "web",
 
         // Our internal authentication claims
