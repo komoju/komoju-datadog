@@ -1,8 +1,17 @@
+## [0.4.9] - 2025-11-16
+
+### 💼 Other
+
+- *(deps)* Update tracing-datadog to 0.4
 ## [0.4.8] - 2025-11-14
 
 ### 🐛 Bug Fixes
 
 - *(axum)* Set span.kind to server for axum handler spans
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.4.8
 ## [0.4.7] - 2025-11-14
 
 ### 🐛 Bug Fixes
