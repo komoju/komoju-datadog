@@ -20,7 +20,7 @@ itertools = "0.14"
 regex = "1"
 reqwest = { version = "0.12", default-features = false, features = ["json"] }
 tracing = "0.1"
-tracing-datadog = { version = "0.3", features = ["http"] }
+tracing-datadog = { version = "0.4", features = ["http"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "parking_lot"] }
 
 # AWS ECS support
