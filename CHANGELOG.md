@@ -1,8 +1,17 @@
+## [0.4.10] - 2025-11-24
+
+### 💼 Other
+
+- *(deps)* Upgrade tracing-datadog to 0.5
 ## [0.4.9] - 2025-11-16
 
 ### 💼 Other
 
 - *(deps)* Update tracing-datadog to 0.4
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.4.9
 ## [0.4.8] - 2025-11-14
 
 ### 🐛 Bug Fixes
