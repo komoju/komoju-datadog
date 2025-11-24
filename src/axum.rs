@@ -14,7 +14,10 @@ use std::{
 };
 use tower::{Layer, Service};
 use tracing::{Span, field::Empty};
-use tracing_datadog::http::{DatadogContext, DistributedTracingContext};
+use tracing_datadog::{
+    context::{TraceContextExt, TracingContextExt},
+    http::W3CTraceContextHeaders,
+};
 
 /// Creates a span from a request.
 fn make_span_from_request<B>(req: &Request<B>) -> Span {
@@ -170,7 +173,10 @@ where
                 span.record("http.route", route);
             }
 
-            span.set_context(DatadogContext::from_w3c_headers(req.headers()));
+            span.set_context(
+                req.headers()
+                    .extract_trace_context::<W3CTraceContextHeaders>(),
+            );
 
             span
         };

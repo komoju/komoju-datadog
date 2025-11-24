@@ -4,7 +4,10 @@ use http::HeaderMap;
 use itertools::Itertools;
 use regex::Regex;
 use std::sync::LazyLock;
-use tracing_datadog::http::DistributedTracingContext;
+use tracing_datadog::{
+    context::{TraceContextExt, TracingContextExt},
+    http::W3CTraceContextHeaders,
+};
 
 /// Returns a Datadog-style path group from a request path, with dynamic segments replaced by '?'.
 ///
@@ -47,7 +50,7 @@ static STATIC_SEGMENT_RE: LazyLock<Regex> =
 /// attach_tracing_headers(request.headers_mut());
 /// ```
 pub fn attach_tracing_headers(headers: &mut HeaderMap) {
-    headers.extend(tracing::Span::current().get_context().to_w3c_headers());
+    headers.inject_trace_context::<W3CTraceContextHeaders>(tracing::Span::current().get_context());
 }
 
 #[cfg(test)]

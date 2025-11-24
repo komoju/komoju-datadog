@@ -89,6 +89,7 @@ This crate has several optional features which can be enabled:
 
 | feature   | provides                                                        |
 |-----------|-----------------------------------------------------------------|
+| `ahash`   | slightly better performance for one extra dependency            |
 | `aws_ecs` | correlation of traces to ECS containers, enables system metrics |
 | `axum`    | `AxumTraceLayer` for automatic spans for each request           |
 | `sqlx`    | `instrument_query` macro for tracing SQLx queries               |
