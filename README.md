@@ -58,7 +58,7 @@ fn answer(question: &str) -> Result<u64, &'static str> {
 
 Certain span tags have special semantic meaning in Datadog:
 
-- `operation` will be mapped to the operation name in Datadog, defaulting to 
+- `operation` will be mapped to the operation name in Datadog, defaulting to
   the span name otherwise
 - `resource` will be mapped to the resource name in Datadog
 
@@ -87,11 +87,24 @@ let _ = StatsD::global().incr("questions.answered", &["answer:42"]);
 
 This crate has several optional features which can be enabled:
 
-| feature   | provides                                                        |
-|-----------|-----------------------------------------------------------------|
-| `ahash`   | slightly better performance for one extra dependency            |
-| `aws_ecs` | correlation of traces to ECS containers, enables system metrics |
-| `axum`    | `AxumTraceLayer` for automatic spans for each request           |
-| `sqlx`    | `instrument_query` macro for tracing SQLx queries               |
+| feature   | use case                                                        | requirements |
+|-----------|-----------------------------------------------------------------|--------------|
+| `ahash`   | slightly better performance for one extra dependency            | - |
+| `aws_ecs` | Running on AWS ECS/Fargate                                      | Requires `ECS_CONTAINER_METADATA_URI_V4` env var |
+| `axum`    | Using Axum web framework                                        | - |
+| `gcp_gke` | Running on GCP GKE                                              | Requires `POD_UID` env var via Downward API |
+| `sqlx`    | Using SQLx for database queries                                 | - |
 
 See the API documentation for more details and usage examples.
+
+### GKE/Kubernetes Setup
+
+To enable container correlation on GKE, configure the Downward API in your pod spec:
+
+```yaml
+env:
+  - name: POD_UID
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.uid
+```
