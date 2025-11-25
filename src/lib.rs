@@ -4,6 +4,9 @@
 #[cfg(feature = "aws_ecs")]
 mod aws;
 
+#[cfg(feature = "gcp_gke")]
+mod gcp;
+
 pub mod config;
 pub mod http;
 pub mod statsd;
