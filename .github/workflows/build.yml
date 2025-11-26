@@ -31,15 +31,15 @@ jobs:
         uses: taiki-e/install-action@cargo-hack
 
       - name: Run tests
-        run: cargo hack test --feature-powerset --skip default
+        run: cargo hack test --feature-powerset --skip default --mutually-exclusive-features aws_ecs,gcp_gke
 
       - name: Lint
         run: |
           cargo fmt --check --package komoju-datadog
-          cargo clippy --all-features -- -D warnings 
+          cargo clippy -F aws_ecs,axum,sqlx -- -D warnings 
 
       - name: Build docs
         run: |
-          cargo doc --no-deps --all-features
+          cargo doc --no-deps -F aws_ecs,axum,sqlx
         env:
           RUSTDOCFLAGS: -D warnings

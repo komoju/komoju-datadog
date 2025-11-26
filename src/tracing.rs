@@ -7,6 +7,11 @@
 //!
 //! Traces are emitted to the Datadog agent.
 
+#[cfg(all(feature = "aws_ecs", feature = "gcp_gke"))]
+compile_error!(
+    "Features 'aws_ecs' and 'gcp_gke' are mutually exclusive and cannot be enabled together"
+);
+
 use tracing_datadog::DatadogTraceLayer;
 use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -49,7 +54,7 @@ impl Tracer {
     pub fn new(config: &crate::Config) -> Self {
         let dd_trace_layer = match &config.trace_agent_url {
             Some(trace_agent_url) => {
-                #[cfg_attr(not(feature = "aws_ecs"), allow(unused_mut))]
+                #[cfg_attr(not(any(feature = "aws_ecs", feature = "gcp_gke")), allow(unused_mut))]
                 let mut builder = DatadogTraceLayer::builder()
                     .service(&config.service)
                     .env(&config.env)
@@ -59,6 +64,10 @@ impl Tracer {
                 #[cfg(feature = "aws_ecs")]
                 if let Some(container_id) = crate::aws::container_id() {
                     builder = builder.container_id(container_id);
+                }
+                #[cfg(feature = "gcp_gke")]
+                if let Some(pod_uid) = crate::gcp::pod_uid() {
+                    builder = builder.container_id(pod_uid);
                 }
                 Some(
                     builder
