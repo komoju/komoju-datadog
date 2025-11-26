@@ -1,8 +1,23 @@
+## [0.4.11] - 2025-11-26
+
+### 🚀 Features
+
+- Add container correlation support for GCP/GKE
+
+### 💼 Other
+
+- *(deps)* Bump tracing-datadog from 0.5.0 to 0.5.1 in the otel group
+- *(deps)* Bump http from 1.3.1 to 1.4.0
+- *(deps)* Bump axum from 0.8.6 to 0.8.7
 ## [0.4.10] - 2025-11-24
 
 ### 💼 Other
 
 - *(deps)* Upgrade tracing-datadog to 0.5
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.4.10
 ## [0.4.9] - 2025-11-16
 
 ### 💼 Other
