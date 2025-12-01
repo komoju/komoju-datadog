@@ -159,6 +159,10 @@ impl ConfigBuilder {
 
     /// Validates the current configuration.
     fn validate(&self) -> Result<(), BuilderError> {
+        if self.service.is_empty() {
+            return Err(BuilderError::InvalidServiceName);
+        }
+
         let validate_url = |url: &str, error: BuilderError| -> Result<(), BuilderError> {
             url::Url::parse(&format!("http://{url}"))
                 .map_err(|_| error)?
@@ -184,6 +188,8 @@ impl ConfigBuilder {
 #[derive(Copy, Clone, Debug)]
 #[non_exhaustive]
 pub enum BuilderError {
+    /// The service name is invalid.
+    InvalidServiceName,
     /// The metrics agent URL is invalid.
     InvalidMetricsAgentUrl,
     /// The trace agent URL is invalid.
@@ -193,6 +199,7 @@ pub enum BuilderError {
 impl Display for BuilderError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::InvalidServiceName => write!(f, "invalid service name"),
             Self::InvalidMetricsAgentUrl => write!(f, "invalid metrics agent URL"),
             Self::InvalidTraceAgentUrl => write!(f, "invalid trace agent URL"),
         }
@@ -204,6 +211,15 @@ impl Error for BuilderError {}
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn builder_validation_empty_service_name() {
+        let builder = ConfigBuilder::default().service("");
+        assert!(matches!(
+            builder.build(),
+            Err(BuilderError::InvalidServiceName)
+        ));
+    }
 
     #[test]
     fn builder_validation_metrics_agent_url_happy_path() {
