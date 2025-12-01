@@ -27,7 +27,7 @@ use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::Subscr
 /// use komoju_datadog::{Config, tracing::Tracer};
 ///
 /// fn main() {
-///    let o11y_config = Config::builder().build();
+///    let o11y_config = Config::builder().build().expect("invalid config");
 ///    let _tracer = Tracer::new(&o11y_config);
 ///
 ///    tokio::runtime::Builder::new_multi_thread()

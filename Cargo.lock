@@ -600,6 +600,7 @@ dependencies = [
  "tracing",
  "tracing-datadog",
  "tracing-subscriber",
+ "url",
 ]
 
 [[package]]

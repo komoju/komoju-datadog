@@ -27,6 +27,7 @@ tracing-subscriber = { version = "0.3", features = [
     "env-filter",
     "parking_lot",
 ] }
+url = "2"
 
 # AWS ECS support
 serde_json = { version = "1", optional = true }

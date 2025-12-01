@@ -21,7 +21,7 @@ for a complete list of options.
 use komoju_datadog::{Config, tracing::Tracer, statsd::StatsD};
 
 fn main() {
-    let o11y_config = Config::builder().service("my-service").build();
+    let o11y_config = Config::builder().service("my-service").build().expect("invalid config");
     StatsD::init_global(&o11y_config);
     Tracer::new(&o11y_config);
 
@@ -78,7 +78,7 @@ available via `StatsD::global()` after initialization.
 ```rust
 use komoju_datadog::{Config, statsd::StatsD};
 
-StatsD::init_global(&Config::builder().build());
+StatsD::init_global(&Config::builder().build().expect("invalid config"));
 
 let _ = StatsD::global().incr("questions.answered", &["answer:42"]);
 ```

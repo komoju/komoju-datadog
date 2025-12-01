@@ -1,6 +1,8 @@
 //! Configuration
 
 use std::env;
+use std::error::Error;
+use std::fmt::{Display, Formatter};
 
 /// Observability configuration.
 ///
@@ -135,7 +137,9 @@ impl ConfigBuilder {
     }
 
     /// Consumes the builder, returning the constructed `Config`.
-    pub fn build(self) -> Config {
+    pub fn build(self) -> Result<Config, BuilderError> {
+        self.validate()?;
+
         let Self {
             service,
             env,
@@ -144,12 +148,108 @@ impl ConfigBuilder {
             metrics_agent_url,
         } = self;
 
-        Config {
+        Ok(Config {
             service,
             env,
             version,
             trace_agent_url,
             metrics_agent_url,
+        })
+    }
+
+    /// Validates the current configuration.
+    fn validate(&self) -> Result<(), BuilderError> {
+        let validate_url = |url: &str, error: BuilderError| -> Result<(), BuilderError> {
+            url::Url::parse(&format!("http://{url}"))
+                .map_err(|_| error)?
+                .port()
+                .ok_or(error)?;
+            Ok(())
+        };
+
+        validate_url(
+            &self.metrics_agent_url,
+            BuilderError::InvalidMetricsAgentUrl,
+        )?;
+
+        if let Some(trace_agent_url) = &self.trace_agent_url {
+            validate_url(trace_agent_url, BuilderError::InvalidTraceAgentUrl)?;
         }
+
+        Ok(())
+    }
+}
+
+/// Errors that can occur during [`ConfigBuilder::build`].
+#[derive(Copy, Clone, Debug)]
+#[non_exhaustive]
+pub enum BuilderError {
+    /// The metrics agent URL is invalid.
+    InvalidMetricsAgentUrl,
+    /// The trace agent URL is invalid.
+    InvalidTraceAgentUrl,
+}
+
+impl Display for BuilderError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidMetricsAgentUrl => write!(f, "invalid metrics agent URL"),
+            Self::InvalidTraceAgentUrl => write!(f, "invalid trace agent URL"),
+        }
+    }
+}
+
+impl Error for BuilderError {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn builder_validation_metrics_agent_url_happy_path() {
+        let builder = ConfigBuilder::default().metrics_agent_url("localhost:8125");
+        assert!(builder.build().is_ok());
+    }
+
+    #[test]
+    fn builder_validation_metrics_agent_url_with_ip() {
+        let builder = ConfigBuilder::default().metrics_agent_url("127.0.0.1:8125");
+        assert!(builder.build().is_ok());
+    }
+
+    #[test]
+    fn builder_validation_metrics_agent_url_empty() {
+        let builder = ConfigBuilder::default().metrics_agent_url("");
+        assert!(matches!(
+            builder.build(),
+            Err(BuilderError::InvalidMetricsAgentUrl)
+        ));
+    }
+
+    #[test]
+    fn builder_validation_metrics_agent_url_with_protocol() {
+        let builder = ConfigBuilder::default().metrics_agent_url("http://localhost:8125");
+        assert!(matches!(
+            builder.build(),
+            Err(BuilderError::InvalidMetricsAgentUrl)
+        ));
+    }
+
+    #[test]
+    fn builder_validation_metrics_agent_url_no_port() {
+        let builder = ConfigBuilder::default().metrics_agent_url("localhost");
+        assert!(matches!(
+            builder.build(),
+            Err(BuilderError::InvalidMetricsAgentUrl)
+        ));
+    }
+
+    #[test]
+    fn builder_validation_metrics_agent_url_invalid_port() {
+        let builder = ConfigBuilder::default().metrics_agent_url("localhost:not-a-port");
+        assert!(matches!(
+            builder.build(),
+            Err(BuilderError::InvalidMetricsAgentUrl)
+        ));
     }
 }

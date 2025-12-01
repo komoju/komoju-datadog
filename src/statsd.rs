@@ -19,7 +19,7 @@ static GLOBAL_STATSD: OnceLock<StatsD> = OnceLock::new();
 /// ```
 /// use komoju_datadog::statsd::StatsD;
 ///
-/// let config = komoju_datadog::Config::builder().build();
+/// let config = komoju_datadog::Config::builder().build().expect("invalid config");
 /// let statsd = StatsD::init_global(&config);
 ///
 /// // From anywhere in the service.
