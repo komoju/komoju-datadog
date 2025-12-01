@@ -9,10 +9,3 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-    # Certain groups of dependencies rely on each others' versions, so should
-    # be bumped together.
-    groups:
-      otel:
-        patterns:
-          - tracing
-          - tracing-*
