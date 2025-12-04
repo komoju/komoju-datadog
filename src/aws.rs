@@ -1,9 +1,13 @@
 //! AWS-related functionality
 
 use std::sync::OnceLock;
+use std::time::Duration;
 
 /// The ID of the container we're running inside, if any.
 static CONTAINER_ID: OnceLock<Option<String>> = OnceLock::new();
+
+/// Timeout for AWS SDK calls.
+const AWS_SDK_TIMEOUT: Duration = Duration::from_secs(2);
 
 /// Returns the ID of the container we're running inside, if any.
 ///
@@ -19,7 +23,14 @@ pub(crate) fn container_id() -> Option<&'static str> {
         .get_or_init(|| {
             let ecs_metadata_uri = std::env::var("ECS_CONTAINER_METADATA_URI_V4").ok()?;
 
-            let container_id = reqwest::blocking::get(&ecs_metadata_uri)
+            let client = reqwest::blocking::Client::builder()
+                .timeout(AWS_SDK_TIMEOUT)
+                .build()
+                .ok()?;
+
+            let container_id = client
+                .get(&ecs_metadata_uri)
+                .send()
                 .ok()?
                 .json::<serde_json::Value>()
                 .ok()?
