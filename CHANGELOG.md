@@ -1,3 +1,8 @@
+## [0.5.1] - 2025-12-04
+
+### 🐛 Bug Fixes
+
+- Add timeout to blocking reqwest call to AWS SDK (#25)
 ## [0.5.0] - 2025-12-01
 
 ### 🐛 Bug Fixes
@@ -8,6 +13,10 @@
 ### 💼 Other
 
 - *(deps)* Bump the otel group with 2 updates (#24)
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.5.0
 ## [0.4.11] - 2025-11-26
 
 ### 🚀 Features
