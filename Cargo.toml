@@ -3,7 +3,7 @@ name = "komoju-datadog"
 version = "0.5.1"
 edition = "2024"
 description = "Opinionated Datadog instrumentation toolkit"
-license-file = "LICENSE"
+license = "MIT"
 repository = "https://github.com/komoju/komoju-datadog"
 rust-version = "1.86"
 
