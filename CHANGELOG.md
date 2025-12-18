@@ -1,8 +1,23 @@
+## [0.6.0] - 2025-12-18
+
+### 🚀 Features
+
+- Add support for 128-bit trace IDs
+
+### 💼 Other
+
+- *(deps)* Bump reqwest from 0.12.24 to 0.12.25 (#26)
+- *(deps)* Bump reqwest from 0.12.25 to 0.12.26 (#27)
+- Properly tag the license as MIT
 ## [0.5.1] - 2025-12-04
 
 ### 🐛 Bug Fixes
 
 - Add timeout to blocking reqwest call to AWS SDK (#25)
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.5.1
 ## [0.5.0] - 2025-12-01
 
 ### 🐛 Bug Fixes
