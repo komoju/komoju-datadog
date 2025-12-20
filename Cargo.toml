@@ -42,4 +42,4 @@ tower = { version = "0.5", features = ["util"], optional = true }
 sqlx-datadog = { version = "0.3", optional = true }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["rt-multi-thread"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

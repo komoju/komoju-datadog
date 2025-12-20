@@ -15,31 +15,19 @@ compile_error!(
 use tracing_datadog::DatadogTraceLayer;
 use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
-/// OpenTelemetry instrumentation. Should be initialized once to install the global handlers and
-/// will de-initialize upon shutdown.
-///
-/// It is important to initialize this before initializing an async runtime. Failing to do so will
-/// result in panicking.
+/// Tracing instrumentation. Should be initialized exactly once to install the global handlers.
 ///
 /// # Examples
 ///
 /// ```
 /// use komoju_datadog::{Config, tracing::Tracer};
 ///
-/// fn main() {
+/// #[tokio::main]
+/// async fn main() {
 ///    let o11y_config = Config::builder().build().expect("invalid config");
-///    let _tracer = Tracer::new(&o11y_config);
+///    Tracer::new(&o11y_config);
 ///
-///    tokio::runtime::Builder::new_multi_thread()
-///       .max_blocking_threads(1024)
-///       .enable_all()
-///       .build()
-///       .expect("failed to build runtime")
-///       .block_on(server())
-/// }
-///
-/// async fn server() {
-///   // Start a server, do stuff.
+///    // ...
 /// }
 /// ```
 #[allow(clippy::needless_doctest_main)]
@@ -47,10 +35,6 @@ pub struct Tracer;
 
 impl Tracer {
     /// Initializes tracing instrumentation.
-    ///
-    /// # Panics
-    ///
-    /// Panics if called from an async context.
     pub fn new(config: &crate::Config) -> Self {
         let dd_trace_layer = match &config.trace_agent_url {
             Some(trace_agent_url) => {
