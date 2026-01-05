@@ -592,7 +592,7 @@ dependencies = [
  "itertools",
  "pin-project-lite",
  "regex",
- "reqwest 0.13.1",
+ "reqwest",
  "serde_json",
  "sqlx-datadog",
  "tokio",
@@ -869,40 +869,6 @@ name = "regex-syntax"
 version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "caf4aa5b0f434c91fe5c7f1ecb6a5ece2130b02ad2a590589dda5146df959001"
-
-[[package]]
-name = "reqwest"
-version = "0.12.28"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eddd3ca559203180a307f12d114c268abf583f59b03cb906fd0b3ff8646c1147"
-dependencies = [
- "base64",
- "bytes",
- "futures-channel",
- "futures-core",
- "futures-util",
- "http",
- "http-body",
- "http-body-util",
- "hyper",
- "hyper-util",
- "js-sys",
- "log",
- "percent-encoding",
- "pin-project-lite",
- "serde",
- "serde_json",
- "serde_urlencoded",
- "sync_wrapper",
- "tokio",
- "tower",
- "tower-http",
- "tower-service",
- "url",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
-]
 
 [[package]]
 name = "reqwest"
@@ -1261,15 +1227,15 @@ dependencies = [
 
 [[package]]
 name = "tracing-datadog"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "177947648c547d6f031bd8aa6c23f07a29b3c9305460485cb238e78c4fd5712f"
+checksum = "c734125c9f651e7510420a17c7d01e8c899f62d876445730b21a3e71f414d18f"
 dependencies = [
  "ahash",
  "http",
  "jiff",
  "rand",
- "reqwest 0.12.28",
+ "reqwest",
  "rmp-serde",
  "serde",
  "serde_json",
