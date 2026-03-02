@@ -174,9 +174,9 @@ dependencies = [
 
 [[package]]
 name = "dogstatsd"
-version = "0.12.2"
+version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9875925e718131ca660db072b66ce689cf60f216117704a3f126e6cf120830e4"
+checksum = "0b3be8a0f8e1659c64dc0edac3216d9e07459967d0331bd3c906640f5a605da4"
 dependencies = [
  "chrono",
  "retry",
