@@ -39,7 +39,7 @@ pin-project-lite = { version = "0.2", optional = true }
 tower = { version = "0.5", features = ["util"], optional = true }
 
 # SQLx support
-sqlx-datadog = { version = "0.3", optional = true }
+sqlx-datadog = { version = "0.4", optional = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
