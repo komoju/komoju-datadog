@@ -1,3 +1,30 @@
+## [0.6.1] - 2026-03-25
+
+### 💼 Other
+
+- *(deps)* Bump tracing from 0.1.43 to 0.1.44 (#28)
+- *(deps)* Bump serde_json from 1.0.145 to 1.0.146 (#29)
+- *(deps)* Bump axum from 0.8.7 to 0.8.8 (#30)
+- *(deps)* Bump serde_json from 1.0.146 to 1.0.148 (#33)
+- *(deps)* Bump reqwest from 0.12.26 to 0.13.1 (#34)
+- *(deps)* Bump tokio from 1.48.0 to 1.49.0 (#35)
+- *(deps)* Bump tracing-datadog from 0.6.0 to 0.6.1 (#36)
+- *(deps)* Bump url from 2.5.7 to 2.5.8 (#37)
+- *(deps)* Bump serde_json from 1.0.148 to 1.0.149 (#38)
+- *(deps)* Bump tower from 0.5.2 to 0.5.3 (#39)
+- *(deps)* Bump regex from 1.12.2 to 1.12.3 (#40)
+- *(deps)* Bump reqwest from 0.13.1 to 0.13.2 (#41)
+- *(deps)* Bump dogstatsd from 0.12.1 to 0.12.2 (#42)
+- *(deps)* Bump pin-project-lite from 0.2.16 to 0.2.17 (#45)
+- *(deps)* Bump futures-util from 0.3.31 to 0.3.32 (#43)
+- *(deps)* Bump dogstatsd from 0.12.2 to 0.12.3 (#44)
+- *(deps)* Bump tokio from 1.49.0 to 1.50.0 (#46)
+- *(deps)* Bump tracing-subscriber from 0.3.22 to 0.3.23 (#47)
+- Bump sqlx-datadog to 0.4.2
+
+### 📚 Documentation
+
+- Update tracing documentation
 ## [0.6.0] - 2025-12-18
 
 ### 🚀 Features
@@ -9,6 +36,10 @@
 - *(deps)* Bump reqwest from 0.12.24 to 0.12.25 (#26)
 - *(deps)* Bump reqwest from 0.12.25 to 0.12.26 (#27)
 - Properly tag the license as MIT
+
+### ⚙️ Miscellaneous Tasks
+
+- Release komoju-datadog version 0.6.0
 ## [0.5.1] - 2025-12-04
 
 ### 🐛 Bug Fixes
