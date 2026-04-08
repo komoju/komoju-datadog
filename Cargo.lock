@@ -1056,9 +1056,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-datadog"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "558a1dd1d9f943b5d897d78335b28784af5722fe08e09c96cdf5734f8faa76fa"
+checksum = "a9ef9bc8df9914c61749dccabd5da87573a6934a69903f1004ea2f48f7632b76"
 dependencies = [
  "quote",
  "syn",
