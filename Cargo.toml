@@ -18,7 +18,7 @@ sqlx = ["dep:sqlx-datadog"]
 [dependencies]
 dogstatsd = "0.12"
 http = "1"
-itertools = "0.14"
+itertools = "0.15"
 regex = "1"
 reqwest = { version = "0.13", default-features = false, features = ["blocking", "json"] }
 tracing = "0.1"
