@@ -1,0 +1,53 @@
+# Release automation for release-plz. See https://release-plz.dev/docs/config.
+#
+# This crate is published to crates.io, so `publish` and `git_only` stay at their
+# defaults: release-plz runs `cargo publish` and derives the current version from
+# the registry rather than from git tags.
+
+[workspace]
+# A feature commit bumps the minor version rather than the patch version, even in
+# 0.x, so "0.x minor means new capability" for downstream users.
+#
+# This is a deliberate policy choice, not a description of past releases: history
+# is mixed (0.4.11 shipped a feature as a patch, 0.6.0 bumped the minor for one),
+# because releases were cut by hand. release-plz's default follows Cargo SemVer
+# and would treat every 0.x minor as breaking, shipping features as patches.
+features_always_increment_minor = true
+
+[changelog]
+# Changelog format shared with the other komoju Rust projects, so the emoji
+# sections look the same everywhere. The group indices are zero-padded because
+# git-cliff sorts groups by the tag text, not numerically.
+body = """
+{% if version %}
+    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}
+    ## [unreleased]
+{% endif %}{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | striptags | trim | upper_first }}
+    {% for commit in commits %}
+        - {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
+            {% if commit.breaking %}[**breaking**] {% endif %}\
+            {{ commit.message | upper_first }}\
+    {% endfor %}
+{% endfor %}
+"""
+sort_commits = "oldest"
+
+commit_parsers = [
+    { message = "^feat", group = "<!-- 00 -->🚀 Features" },
+    { message = "^fix", group = "<!-- 01 -->🐛 Bug Fixes" },
+    { message = "^refactor", group = "<!-- 02 -->🚜 Refactor" },
+    { message = "^doc", group = "<!-- 03 -->📚 Documentation" },
+    { message = "^perf", group = "<!-- 04 -->⚡ Performance" },
+    { message = "^style", group = "<!-- 05 -->🎨 Styling" },
+    { message = "^test", group = "<!-- 06 -->🧪 Testing" },
+    { message = "^chore\\(release\\): prepare for", skip = true },
+    { message = "^chore\\(deps.*\\)", skip = true },
+    { message = "^chore\\(pr\\)", skip = true },
+    { message = "^chore\\(pull\\)", skip = true },
+    { message = "^chore|^ci", group = "<!-- 07 -->⚙️ Miscellaneous Tasks" },
+    { body = ".*security", group = "<!-- 08 -->🛡️ Security" },
+    { message = "^revert", group = "<!-- 09 -->◀️ Revert" },
+    { message = ".*", group = "<!-- 10 -->💼 Other" },
+]
