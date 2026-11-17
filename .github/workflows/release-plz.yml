@@ -1,0 +1,60 @@
+name: Release-plz
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  # Publish unpublished versions to crates.io, then push the tag and open the
+  # GitHub release for them.
+  release-plz-release:
+    name: Release-plz release
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'komoju' }}
+    permissions:
+      contents: write # Push the tag and create the GitHub release
+      pull-requests: read # Detect the release PR and its commits
+      id-token: write # Exchange an OIDC token for a crates.io trusted publishing token
+    steps:
+      - &checkout
+        name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          # Full history: release-plz resolves the released commit and builds the
+          # changelog from the commits since the last release.
+          fetch-depth: 0
+          persist-credentials: false
+      - &install-rust
+        name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Run release-plz
+        uses: release-plz/action@v0.5
+        with:
+          command: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Open or update the PR that bumps the version and adds the changelog entry.
+  release-plz-pr:
+    name: Release-plz PR
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'komoju' }}
+    permissions:
+      contents: write # Push the release branch
+      pull-requests: write # Open and update the release PR
+    # Serialize runs for the same branch: the release PR branch must not be
+    # rewritten by two runs at once. Never cancel, or a release could be skipped.
+    concurrency:
+      group: release-plz-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - *checkout
+      - *install-rust
+      - name: Run release-plz
+        uses: release-plz/action@v0.5
+        with:
+          command: release-pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
