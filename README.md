@@ -70,6 +70,32 @@ Errors can be rendered in Datadog by including the following tags:
 - `error.msg`
 - `error.stack` (optional)
 
+#### Axum request spans
+
+The `axum` feature provides `AxumTraceLayer`, which creates one span per
+request. `tracing` fixes a span's field set when the span is created and
+silently drops writes to undeclared fields, so application-specific tags have to
+be declared up front. Pass a span factory to declare your own:
+
+```rust
+# #[cfg(feature = "axum")] {
+use komoju_datadog::axum::{AxumTraceLayer, RequestInfo};
+use komoju_datadog::request_span;
+use tracing::Span;
+
+fn make_span(info: &RequestInfo<'_>) -> Span {
+    // Standard request fields, plus `tenant.id` for later recording.
+    request_span!(info, tenant.id)
+}
+
+let router: axum::Router = axum::Router::new().layer(AxumTraceLayer::with_make_span(make_span));
+# }
+```
+
+Anywhere inside the request, `Span::current().record("tenant.id", tenant)`
+then tags the request span. `AxumTraceLayer::default()` declares only the
+standard fields.
+
 ### Metrics
 
 Metrics can be sent to Datadog using the `StatsD` struct. A global instance is
