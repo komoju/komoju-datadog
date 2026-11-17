@@ -20,7 +20,7 @@ jobs:
     steps:
       - &checkout
         name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           # Full history: release-plz resolves the released commit and builds the
           # changelog from the commits since the last release.
@@ -28,9 +28,9 @@ jobs:
           persist-credentials: false
       - &install-rust
         name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
       - name: Run release-plz
-        uses: release-plz/action@v0.5
+        uses: release-plz/action@66b324fd6c72d05d2a08568492ecdd62bfb8a62b # v0.5.148
         with:
           command: release
         env:
@@ -53,7 +53,7 @@ jobs:
       - *checkout
       - *install-rust
       - name: Run release-plz
-        uses: release-plz/action@v0.5
+        uses: release-plz/action@66b324fd6c72d05d2a08568492ecdd62bfb8a62b # v0.5.148
         with:
           command: release-pr
         env:
