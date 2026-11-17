@@ -14,6 +14,13 @@
 # and would treat every 0.x minor as breaking, shipping features as patches.
 features_always_increment_minor = true
 
+# cargo-semver-checks builds rustdoc with every feature enabled at once, which trips
+# the `compile_error!` for the mutually exclusive `aws_ecs` and `gcp_gke` features in
+# src/tracing.rs. build.yml encodes the same incompatibility via
+# `--mutually-exclusive-features aws_ecs,gcp_gke`, so semver checking cannot work on
+# this crate as configured.
+semver_check = false
+
 [changelog]
 # Changelog format shared with the other komoju Rust projects, so the emoji
 # sections look the same everywhere. The group indices are zero-padded because
