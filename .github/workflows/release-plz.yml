@@ -11,7 +11,7 @@ jobs:
   # GitHub release for them.
   release-plz-release:
     name: Release-plz release
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, public-release]
     if: ${{ github.repository_owner == 'komoju' }}
     permissions:
       contents: write # Push the tag and create the GitHub release
@@ -42,7 +42,7 @@ jobs:
   # Open or update the PR that bumps the version and adds the changelog entry.
   release-plz-pr:
     name: Release-plz PR
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, public-release]
     if: ${{ github.repository_owner == 'komoju' }}
     permissions:
       contents: write # Push the release branch
