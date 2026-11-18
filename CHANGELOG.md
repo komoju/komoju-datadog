@@ -1,3 +1,41 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.7.0] - 2026-11-18
+
+### 🚀 Features
+
+- *(axum)* [**breaking**] Let applications declare their own request span tags ([#80](https://github.com/komoju/komoju-datadog/pull/80))
+
+### 💼 Other
+
+- Update checkout actions to v6
+- *(deps)* Bump reqwest from 0.13.2 to 0.13.3 ([#56](https://github.com/komoju/komoju-datadog/pull/56))
+- *(deps)* Bump http from 1.4.0 to 1.4.1 ([#61](https://github.com/komoju/komoju-datadog/pull/61))
+- *(deps)* Bump reqwest from 0.13.3 to 0.13.4 ([#60](https://github.com/komoju/komoju-datadog/pull/60))
+- *(deps)* Bump serde_json from 1.0.149 to 1.0.150 ([#59](https://github.com/komoju/komoju-datadog/pull/59))
+- *(deps)* Bump tokio from 1.51.1 to 1.52.3 ([#58](https://github.com/komoju/komoju-datadog/pull/58))
+- *(deps)* Bump axum from 0.8.8 to 0.8.9 ([#53](https://github.com/komoju/komoju-datadog/pull/53))
+- *(deps)* Bump bytes from 1.10.1 to 1.12.0 ([#62](https://github.com/komoju/komoju-datadog/pull/62))
+- *(deps)* Bump rand from 0.9.2 to 0.9.4 ([#63](https://github.com/komoju/komoju-datadog/pull/63))
+- *(deps)* Bump regex from 1.12.3 to 1.12.4 ([#64](https://github.com/komoju/komoju-datadog/pull/64))
+- *(deps)* Bump itertools from 0.14.0 to 0.15.0 ([#65](https://github.com/komoju/komoju-datadog/pull/65))
+- *(deps)* Bump http from 1.4.1 to 1.4.2 ([#66](https://github.com/komoju/komoju-datadog/pull/66))
+- Migrate release automation to release-plz ([#75](https://github.com/komoju/komoju-datadog/pull/75))
+- *(deps)* Bump dogstatsd from 0.12.3 to 0.12.4 ([#67](https://github.com/komoju/komoju-datadog/pull/67))
+- *(deps)* Bump regex from 1.12.4 to 1.13.1 ([#69](https://github.com/komoju/komoju-datadog/pull/69))
+- *(deps)* Bump actions/checkout from 6.1.0 to 7.0.1 ([#76](https://github.com/komoju/komoju-datadog/pull/76))
+- *(deps)* Bump futures-util from 0.3.32 to 0.3.34 ([#77](https://github.com/komoju/komoju-datadog/pull/77))
+- *(deps)* Bump tokio from 1.52.3 to 1.54.1 ([#78](https://github.com/komoju/komoju-datadog/pull/78))
+- *(deps)* Bump serde_json from 1.0.150 to 1.0.154 ([#79](https://github.com/komoju/komoju-datadog/pull/79))
+- Run workflows on self-hosted runners, disable semver checks ([#81](https://github.com/komoju/komoju-datadog/pull/81))
+- Add individual CODEOWNERS reviewer ([#85](https://github.com/komoju/komoju-datadog/pull/85))
 ## [0.6.1] - 2026-03-25
 
 ### 💼 Other
