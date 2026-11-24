@@ -16,7 +16,6 @@ jobs:
     permissions:
       contents: write # Push the tag and create the GitHub release
       pull-requests: read # Detect the release PR and its commits
-      id-token: write # Exchange an OIDC token for a crates.io trusted publishing token
     steps:
       - &checkout
         name: Checkout repository
@@ -38,6 +37,9 @@ jobs:
           command: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Scoped crates.io token (`publish-update`, crate `komoju-datadog`). When set,
+          # release-plz uses it for `cargo publish` instead of attempting OIDC.
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   # Open or update the PR that bumps the version and adds the changelog entry.
   release-plz-pr:
