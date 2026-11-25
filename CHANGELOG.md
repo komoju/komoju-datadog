@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-11-25
+
+### 💼 Other
+
+- *(deps)* Bump taiki-e/install-action from 2.90.5 to 2.90.7 ([#90](https://github.com/komoju/komoju-datadog/pull/90))
+
 ## [0.7.0] - 2026-11-24
 
 ### 🚀 Features
